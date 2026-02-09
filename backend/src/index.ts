@@ -3,9 +3,13 @@ import dotenv from 'dotenv';
 // Load environment variables BEFORE importing app
 dotenv.config();
 
+import connectDB from './config/db';
 import app from './app';
 
 const PORT = process.env.PORT || 5000;
+
+// Connect to Database
+connectDB();
 
 // Start server
 app.listen(PORT, () => {
