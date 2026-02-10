@@ -10,7 +10,12 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,json}\""
+    "format:check": "prettier --check \"**/*.{ts,json}\"",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "prisma:reset": "prisma migrate reset",
+    "prisma:deploy": "prisma migrate deploy"
   },
   "keywords": [
     "bibliosmart",
@@ -22,6 +27,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@prisma/client": "^6.15.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -39,7 +45,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.2.2",
+    "@types/node": "^25.2.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
     "eslint": "^9.39.2",
@@ -47,6 +53,7 @@
     "eslint-plugin-prettier": "^5.5.5",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
+    "prisma": "6.19",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

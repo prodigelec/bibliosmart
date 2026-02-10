@@ -29,14 +29,29 @@ export const registerValidation = [
     .withMessage('Le nom est requis')
     .trim(),
   body('password')
-    .isLength({ min: 8 })
-    .withMessage('Le mot de passe doit contenir au moins 8 caractères')
+    .isLength({ min: 12 })
+    .withMessage('Le mot de passe doit contenir au moins 12 caractères')
     .matches(/\d/)
     .withMessage('Le mot de passe doit contenir au moins un chiffre')
     .matches(/[a-z]/)
     .withMessage('Le mot de passe doit contenir au moins une lettre minuscule')
     .matches(/[A-Z]/)
-    .withMessage('Le mot de passe doit contenir au moins une lettre majuscule'),
+    .withMessage('Le mot de passe doit contenir au moins une lettre majuscule')
+    .matches(/[!@#$%^&*(),.?":{}|<>]/)
+    .withMessage('Le mot de passe doit contenir au moins un caractère spécial')
+    .not().matches(/\s/)
+    .withMessage('Le mot de passe ne doit pas contenir d\'espaces')
+    .custom((value) => {
+      // Vérifier qu'il n'y a pas de séquences communes
+      const commonSequences = ['123', 'abc', 'qwerty', 'password'];
+      const lowerValue = value.toLowerCase();
+      for (const seq of commonSequences) {
+        if (lowerValue.includes(seq)) {
+          throw new Error('Le mot de passe ne doit pas contenir de séquences communes');
+        }
+      }
+      return true;
+    }),
 ];
 
 export const loginValidation = [
