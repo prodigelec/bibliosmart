@@ -2,29 +2,42 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
+
+// Routes imports
+import authRoutes from './routes/auth.routes';
+
+// Middleware imports
+import { errorHandler } from './middlewares/error.middleware';
+import { securityHeaders } from './middlewares/security.middleware';
+import { preventNoSQLInjection, sanitizeInput } from './middlewares/inputSanitization.middleware';
+import { generalLimiter } from './config/rateLimit.config';
 
 const app: Application = express();
 
 // Security middleware
 app.use(helmet());
+app.use(securityHeaders);
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
 }));
 
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // 100 requests per window
-    message: { error: 'Too many requests, please try again later.' },
-});
-app.use('/api', limiter);
+// Rate limiting général
+app.use('/api', generalLimiter);
+
+// Input sanitization and security
+app.use(preventNoSQLInjection);
+app.use(sanitizeInput);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// API Routes
+import securityRoutes from './routes/security.routes';
+app.use('/api/auth', authRoutes);
+app.use('/api/security', securityRoutes);
 
 // Health check
 app.get('/api/health', (req: Request, res: Response) => {
@@ -37,16 +50,10 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 // 404 handler
 app.use((req: Request, res: Response) => {
-    res.status(404).json({ error: 'Route not found' });
+    res.status(404).json({ status: 'error', message: 'Route non trouvée' });
 });
 
-// Error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error(err.stack);
-    res.status(500).json({
-        error: 'Internal server error',
-        message: process.env.NODE_ENV === 'development' ? err.message : undefined,
-    });
-});
+// Global error handler
+app.use(errorHandler);
 
 export default app;
