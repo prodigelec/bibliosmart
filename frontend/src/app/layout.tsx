@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "react-hot-toast";
+import Navbar from "@/components/layouts/Navbar";
 
 // Elegant serif font for headings - perfect for a library app
 const playfair = Playfair_Display({
@@ -30,11 +32,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr">
+    <html lang="fr" className="scroll-smooth">
       <body
         className={`${playfair.variable} ${inter.variable} antialiased`}
       >
-        {children}
+        <Navbar />
+        { children }
+        <Toaster position="bottom-right" toastOptions={{
+          style: {
+            background: 'var(--surface)',
+            color: 'var(--foreground)',
+            border: '1px solid var(--primary-light)',
+            borderRadius: 'var(--radius-xl)',
+          }
+        }} />
       </body>
     </html>
   );
